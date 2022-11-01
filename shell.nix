@@ -3,5 +3,5 @@
 with pkgs;
 
 mkShell {
-  buildInputs = [ cargo rustc rustfmt pkg-config ];
+  buildInputs = [ cargo rustc rustfmt openssl pkg-config ];
 }
