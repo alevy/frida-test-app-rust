@@ -5,13 +5,13 @@ use serde::Deserialize;
 use rust_socketio::ClientBuilder;
 use vodozemac::{olm::{Account, Session, OlmMessage, SessionConfig}, Curve25519PublicKey};
 
-use crate::storage;
+pub mod storage;
 
 
-pub struct Frida {
+pub struct Frida<D> {
     account: Arc<Mutex<Account>>,
     pub device_id: String,
-    database: Arc<storage::DB>,
+    database: Arc<D>,
     rest_client: Client,
 }
 
@@ -23,8 +23,8 @@ pub struct Message {
     seqID: usize,
 }
 
-impl Frida {
-    pub fn new(database: storage::DB) -> Result<Frida, Box<dyn std::error::Error>> {
+impl<D: storage::DB + Send + Sync + 'static> Frida<D> {
+    pub fn new(database: D) -> Result<Frida<D>, Box<dyn std::error::Error>> {
         let account = database.get_item("account")
             .map(Account::from_pickle)
             .unwrap_or_else(|_| {

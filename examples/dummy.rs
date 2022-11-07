@@ -6,8 +6,7 @@ use clap::{Parser, Subcommand};
 use serde::{Serialize, Deserialize};
 use serde_json::Value;
 
-mod frida;
-mod storage;
+use frida::{self, storage, storage::DB};
 
 #[derive(Subcommand)]
 enum Commands {
@@ -81,9 +80,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let cli = Cli::parse();
 
-    let frida = Arc::new(frida::Frida::new(storage::DB::new(Path::new(&cli.frida_storage))?)?);
+    let frida = Arc::new(frida::Frida::new(storage::LMDB::new(Path::new(&cli.frida_storage))?)?);
 
-    let app_db = storage::DB::new(Path::new(&cli.app_storage))?;
+    let app_db = storage::LMDB::new(Path::new(&cli.app_storage))?;
 
     let (sender, receiver) = sync_channel(10);
     frida.connect_socketio(sender)?;

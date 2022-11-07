@@ -407,7 +407,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "frida-test-app"
+name = "frida"
 version = "0.1.0"
 dependencies = [
  "clap",
